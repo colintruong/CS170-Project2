@@ -53,15 +53,16 @@ unordered_set<int> ForwardSelection(int n) {
     return bestSet;
 }
 
-void printSet(unordered_set<int> s) {
-    for (int num : s) {
-        cout << num << " ";
+void printSet(unordered_set<int>& s) {
+    vector<int> elements(s.begin(), s.end());
+    for (auto it = elements.rbegin(); it != elements.rend(); ++it) {
+        cout << *it << " ";
     }
 }
 
-int main() {
-    cout << "Testing features 1...3" << endl;
-    ForwardSelection(5);
-    cout << "Finished!" << endl;
-    return 0;
-}
+// int main() {
+//     cout << "Testing features 1...5" << endl;
+//     ForwardSelection(5);
+//     cout << "Finished!" << endl;
+//     return 0;
+// }
