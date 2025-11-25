@@ -1,5 +1,6 @@
 #include <iostream>
 #include "ForwardSelection.h"
+#include "backwardElimination.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ void menu() {
     cin >> numberOfFeatures;
     cout << endl;
 
-    cout << "Type the number of the algorithm you want to run." << endl;
+    cout << "Type the number of the algoirhtm you want to run." << endl;
     cout << "\n 1. Foward Selection \n 2. Backward Selection \n 3. N/A" << endl;
     cin >> choice;
     cout << endl;
@@ -22,6 +23,11 @@ void menu() {
         cout << endl;
 
         unordered_set<int> result = ForwardSelection(numberOfFeatures);
+    }
+    if (choice == 2) {
+        cout << "Running Backward Elimination..." << endl;
+        cout << endl;
+        backwardElimination(numberOfFeatures);
     }
 }
 
