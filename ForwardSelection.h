@@ -28,7 +28,7 @@ struct SetEq {
 
 unordered_set<int> getMaxKey(const unordered_map<unordered_set<int>, int, SetHash, SetEq>& mp);
 int getRandom(int low, int high);
-void printSet(unordered_set<int>& s);
+void printSet(const unordered_set<int>& s);
 unordered_set<int> ForwardSelection(int n);
 
 #endif

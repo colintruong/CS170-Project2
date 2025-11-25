@@ -1,3 +1,4 @@
+#include "backwardElimination.h"
 #include <random>
 #include <vector>
 #include <string>
@@ -42,8 +43,8 @@ void backwardElimination(int numFeatures){
     vector<int> bestSoFar = currSet;
     double bestAccuracy = currAccuracy;
 
-    cout << "Features: " << stringFormat(currSet) << " Evaluation: \"random\" Accuracy: " << fixed << setprecision(1) << currAccuracy << "%\n";
-    cout << "Beginning the search.\n";
+    cout << "Features: " << stringFormat(currSet) << " Evaluation: \"random\" Accuracy: " << fixed << setprecision(1) << currAccuracy << "%\n" << endl;
+    cout << "Beginning the search.\n" << endl;
 
     while (currSet.size() > 1){
         double bestAccLevel = -1.0;
@@ -67,10 +68,11 @@ void backwardElimination(int numFeatures){
         }
 
         currSet = bestCand;
-        cout << "Feature: " << stringFormat(currSet) << " is the best. Accuracy: " << fixed << setprecision(1) << bestAccLevel << "%\n";
+        cout << endl;
+        cout << "Feature: " << stringFormat(currSet) << " was best. Accuracy: " << fixed << setprecision(1) << bestAccLevel << "%\n" << endl;
 
         if (bestAccLevel < bestAccuracy){
-            cout << "Accuracy is decreasing\n";
+            cout << "(Warning, Accuracy has decreased!)\n";
         }
 
         if (bestAccLevel > bestAccuracy){
@@ -80,12 +82,4 @@ void backwardElimination(int numFeatures){
     }
 
     cout << "Best feature: " << stringFormat(bestSoFar) << ". Accuracy: " << fixed << setprecision(1) << bestAccuracy << "%\n";
-}
-
-int main() {
-    cout << "Backward Elimination Testing.\n";
-    cout << "Please enter total number of features: ";
-    int numFeatures;
-    cin >> numFeatures;
-    backwardElimination(numFeatures);
 }

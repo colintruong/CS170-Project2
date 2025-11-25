@@ -32,8 +32,8 @@ unordered_set<int> ForwardSelection(int n) {
     cout << fixed << setprecision(1);
 
     cout << "Using no features and \"random\" evaluation, I get an accuracy of "
-         << getRandomAcc() << "%\n";
-    cout << "Beginning search.\n";
+         << getRandomAcc() << "%\n" << endl;
+    cout << "Beginning search.\n" << endl;
 
     unordered_set<int> bestSet = {};
     double bestValue = -DBL_MAX;
@@ -59,10 +59,11 @@ unordered_set<int> ForwardSelection(int n) {
 
         unordered_set<int> nextSet = getMaxKey(map);
         double nextValue = map[nextSet];
-
+        
+        cout << endl;
         cout << "Feature set ";
         printSet(nextSet);
-        cout << " was best, accuracy is " << nextValue << "%\n";
+        cout << " was best, accuracy is " << nextValue << "%\n" << endl;
 
         if (lastValue > 0 && nextValue < lastValue) {
             cout << "(Warning, Accuracy has decreased!)\n";
