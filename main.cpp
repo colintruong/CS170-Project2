@@ -13,8 +13,8 @@ void menu() {
     cin >> numberOfFeatures;
     cout << endl;
 
-    cout << "Type the number of the algoirhtm you want to run." << endl;
-    cout << "\n 1. Foward Selection \n 2. Backward Selection \n 3. N/A" << endl;
+    cout << "Type the number of the algorithm you want to run." << endl;
+    cout << "\n 1. Forward Selection \n 2. Backward Selection \n 3. N/A" << endl;
     cin >> choice;
     cout << endl;
 
