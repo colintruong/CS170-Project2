@@ -29,6 +29,9 @@ void menu() {
         cout << endl;
         backwardElimination(numberOfFeatures);
     }
+    else {
+        cout << "Please choose only 1 or 2..." << endl;
+    }
 }
 
 int main()
