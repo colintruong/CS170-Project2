@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <iomanip>
 #include "ForwardSelection.h"
 #include "backwardElimination.h"
 #include "Classifier.h"
@@ -41,17 +42,56 @@ int main()
 {
     //menu();
     Classifier cl;
-    string filename = "small-test-dataset.txt";
-    vector<Instance> dataset = cl.loadDataset(filename);
+    int option;
+    cout << fixed << setprecision(5);
+    cout << "Pick small(1) or large file(2) testing: " << endl;
+    cin >> option;
+    
+    if (option == 1) {
+    
 
-    if (dataset.empty()) {
-        cerr << "Dataset empty or failed to load.\n";
-        return 1;
+        string filename = "small-test-dataset-2-2.txt";
+        vector<Instance> dataset = cl.loadDataset(filename);
+    
+        if (dataset.empty()) {
+            cerr << "Dataset empty or failed to load.\n";
+            return 1;
+        }
+    
+        cl.normalizeData(dataset);
+    
+        validator val(cl);
+    
+        vector<int> featureSubset = {3, 5, 7};
+    
+        cout << "Testing LOOCV with feature subset: {3, 5, 7}" << endl;
+    
+        double accuracy = val.leaveOneOutValidation(dataset, featureSubset);
+    
+        cout << "Final accuracy = " << accuracy << endl;
     }
+    
+    else if (option == 2) {
+        string filename = "large-test-dataset-2.txt";
+        vector<Instance> dataset = cl.loadDataset(filename);
 
-    cl.normalizeData(dataset);
-
-
-
+        if (dataset.empty()) {
+            cerr << "Dataset empty or failed to load.\n";
+            return 1;
+        }
+        
+        cl.normalizeData(dataset);
+        cout << "FLAG 3" << endl;
+        validator val(cl);
+        cout << "FLAG 4" << endl;
+        vector<int> featureSubset = {1, 15, 27};
+    
+        cout << "Testing LOOCV with feature subset: {1, 15, 27}" << endl;
+    
+        double accuracy = val.leaveOneOutValidation(dataset, featureSubset);
+    
+        cout << "Final accuracy = " << accuracy << endl;
+    }
+    
     return 0;
 }

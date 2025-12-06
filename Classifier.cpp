@@ -33,25 +33,45 @@ double Classifier::euclidean(const vector<double>& a, const vector<double>& b) c
 vector<Instance> Classifier::loadDataset(const string& filename) {
     vector<Instance> dataset;
     ifstream fin(filename);
-    if (!fin) { cerr << "Cannot open file\n"; return dataset; }
+    if (!fin) { 
+        cerr << "Cannot open file: " << filename << endl;
+        return dataset;
+    }
 
     string line;
+    int expected = -1;
+
     while (getline(fin, line)) {
         if (line.empty()) continue;
 
         stringstream ss(line);
         double val;
         Instance inst;
+
         ss >> val;
         inst.classLabel = static_cast<int>(val);
 
         while (ss >> val)
             inst.features.push_back(val);
 
+        // Determine expected feature count from first row
+        if (expected == -1) {
+            expected = inst.features.size();
+        }
+
+        // Skip malformed rows
+        if (inst.features.size() != expected) {
+            cout << "Skipping row (feature count mismatch): has "
+                 << inst.features.size() << " expected " << expected << endl;
+            continue;
+        }
+
         dataset.push_back(inst);
     }
+
     return dataset;
 }
+
 
 void Classifier::normalizeData(vector<Instance>& data) {
     if (data.empty()) return;
