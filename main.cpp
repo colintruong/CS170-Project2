@@ -1,6 +1,9 @@
 #include <iostream>
+#include <chrono>
 #include "ForwardSelection.h"
 #include "backwardElimination.h"
+#include "Classifier.h"
+#include "validator.h"
 
 using namespace std;
 
@@ -36,7 +39,9 @@ void menu() {
 
 int main()
 {
-    menu();
+    //menu();
+
+
 
     return 0;
 }

@@ -53,25 +53,25 @@ vector<Instance> Classifier::loadDataset(const string& filename) {
     return dataset;
 }
 
-int main() {
-    Classifier cl;
-    string filename = "small-test-dataset-2-2.txt";
-    vector<Instance> dataset = cl.loadDataset(filename);
+// int main() {
+//     Classifier cl;
+//     string filename = "small-test-dataset-2-2.txt";
+//     vector<Instance> dataset = cl.loadDataset(filename);
 
-    if (dataset.empty()) {
-        cerr << "Dataset empty!\n";
-        return 1;
-    }
+//     if (dataset.empty()) {
+//         cerr << "Dataset empty!\n";
+//         return 1;
+//     }
 
-    // Example: train on all but last instance, test on last
-    vector<Instance> trainSet(dataset.begin(), dataset.end() - 1);
-    cl.train(trainSet);
+//     // Example: train on all but last instance, test on last
+//     vector<Instance> trainSet(dataset.begin(), dataset.end() - 1);
+//     cl.train(trainSet);
 
-    int predicted = cl.test(dataset.back().features);
-    cout << "Predicted: " << predicted 
-         << ", Actual: " << dataset.back().classLabel << endl;
+//     int predicted = cl.test(dataset.back().features);
+//     cout << "Predicted: " << predicted 
+//          << ", Actual: " << dataset.back().classLabel << endl;
 
-    return 0;
-}
+//     return 0;
+// }
 
 
