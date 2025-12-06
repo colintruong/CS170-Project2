@@ -38,40 +38,75 @@ void menu() {
     }
 }
 
-int main()
-{
-    //menu();
+int evaluation() {
     Classifier cl;
     int option;
-    cout << fixed << setprecision(5);
-    cout << "Pick small(1) or large file(2) testing: " << endl;
+
+    cout << "Pick small (1) or large (2) dataset: ";
     cin >> option;
-    
+
     if (option == 1) {
-    
 
         string filename = "small-test-dataset-2-2.txt";
         vector<Instance> dataset = cl.loadDataset(filename);
-    
+
         if (dataset.empty()) {
             cerr << "Dataset empty or failed to load.\n";
-            return 1;
+            return 0;
         }
-    
+
         cl.normalizeData(dataset);
-    
+
         validator val(cl);
-    
         vector<int> featureSubset = {3, 5, 7};
-    
-        cout << "Testing LOOCV with feature subset: {3, 5, 7}" << endl;
-    
-        double accuracy = val.leaveOneOutValidation(dataset, featureSubset);
-    
+
+        cout << "\n===== SMALL DATASET TRACE =====" << endl;
+        cout << "Feature subset: {3, 5, 7}\n" << endl;
+
+        auto start = chrono::high_resolution_clock::now();
+
+        int n = dataset.size();
+        int correct = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            vector<Instance> train;
+            train.reserve(n - 1);
+
+            for (int j = 0; j < n; j++)
+                if (j != i)
+                    train.push_back(val.inst(dataset[j], featureSubset));
+
+            cl.train(train);
+
+            vector<double> testFeatures = val.feat(dataset[i], featureSubset);
+            int predicted = cl.test(testFeatures);
+            int actual = dataset[i].classLabel;
+
+            cout << "Instance " << i
+                 << " | Predicted = " << predicted
+                 << " | Actual = " << actual
+                 << " | " << (predicted == actual ? "Correct" : "Wrong")
+                 << endl;
+
+            if (predicted == actual)
+                correct++;
+        }
+
+        double accuracy = (double)correct / n;
+
+        auto end = chrono::high_resolution_clock::now();
+        double elapsed = chrono::duration<double>(end - start).count();
+
+        cout << "\nCorrect Predictions: " << correct << " / " << n << endl;
+        cout << fixed << setprecision(6);
         cout << "Final accuracy = " << accuracy << endl;
+        cout << "Time elapsed = " << elapsed << " seconds\n";
+        cout << "===== END SMALL DATASET TRACE =====\n";
     }
-    
+
     else if (option == 2) {
+
         string filename = "large-test-dataset-2.txt";
         vector<Instance> dataset = cl.loadDataset(filename);
 
@@ -79,19 +114,69 @@ int main()
             cerr << "Dataset empty or failed to load.\n";
             return 1;
         }
-        
+
         cl.normalizeData(dataset);
-        cout << "FLAG 3" << endl;
+
         validator val(cl);
-        cout << "FLAG 4" << endl;
         vector<int> featureSubset = {1, 15, 27};
-    
-        cout << "Testing LOOCV with feature subset: {1, 15, 27}" << endl;
-    
-        double accuracy = val.leaveOneOutValidation(dataset, featureSubset);
-    
+
+        cout << "\n===== LARGE DATASET TRACE =====" << endl;
+        cout << "Feature subset: {1, 15, 27}\n" << endl;
+
+        auto start = chrono::high_resolution_clock::now();
+
+        int n = dataset.size();
+        int correct = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            vector<Instance> train;
+            train.reserve(n - 1);
+
+            for (int j = 0; j < n; j++)
+                if (j != i)
+                    train.push_back(val.inst(dataset[j], featureSubset));
+
+            cl.train(train);
+
+            vector<double> testFeatures = val.feat(dataset[i], featureSubset);
+            int predicted = cl.test(testFeatures);
+            int actual = dataset[i].classLabel;
+
+            cout << "Instance " << i
+                 << " | Predicted = " << predicted
+                 << " | Actual = " << actual
+                 << " | " << (predicted == actual ? "Correct" : "Wrong")
+                 << endl;
+
+            if (predicted == actual)
+                correct++;
+        }
+
+        double accuracy = (double)correct / n;
+
+        auto end = chrono::high_resolution_clock::now();
+        double elapsed = chrono::duration<double>(end - start).count();
+
+        cout << "\nCorrect Predictions: " << correct << " / " << n << endl;
+
+        cout << fixed << setprecision(2);
         cout << "Final accuracy = " << accuracy << endl;
+
+        cout << fixed << setprecision(6);
+        cout << "Time elapsed = " << elapsed << " seconds\n";
+
+        cout << "===== END LARGE DATASET TRACE =====\n";
     }
-    
+
+    else {
+        cout << "Invalid option." << endl;
+    }
+}
+
+int main()
+{
+    //menu();
+    evaluation();
     return 0;
 }

@@ -20,6 +20,7 @@ class Classifier {
         void train(const vector<Instance>& data);
         int test(const vector<double>& id);
         vector<Instance> loadDataset(const string& filename);
+        void normalizeData(vector<Instance>& data);
     private:
         vector<Instance> trainingData;
         double euclidean(const vector<double>& a, const vector<double>& b) const;
