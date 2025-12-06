@@ -40,6 +40,16 @@ void menu() {
 int main()
 {
     //menu();
+    Classifier cl;
+    string filename = "small-test-dataset.txt";
+    vector<Instance> dataset = cl.loadDataset(filename);
+
+    if (dataset.empty()) {
+        cerr << "Dataset empty or failed to load.\n";
+        return 1;
+    }
+
+    cl.normalizeData(dataset);
 
 
 

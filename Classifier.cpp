@@ -53,6 +53,35 @@ vector<Instance> Classifier::loadDataset(const string& filename) {
     return dataset;
 }
 
+void Classifier::normalizeData(vector<Instance>& data) {
+    if (data.empty()) return;
+
+    int numFeatures = data[0].features.size();
+    int n = data.size();
+
+    vector<double> mean(numFeatures, 0.0);
+    vector<double> stddev(numFeatures, 0.0);
+
+    for (const auto& inst : data)
+        for (int i = 0; i < numFeatures; i++)
+            mean[i] += inst.features[i];
+
+    for (int i = 0; i < numFeatures; i++)
+        mean[i] /= n;
+
+    for (const auto& inst : data)
+        for (int i = 0; i < numFeatures; i++)
+            stddev[i] += pow(inst.features[i] - mean[i], 2);
+
+    for (int i = 0; i < numFeatures; i++)
+        stddev[i] = sqrt(stddev[i] / n);
+
+    for (auto& inst : data)
+        for (int i = 0; i < numFeatures; i++)
+            inst.features[i] = (inst.features[i] - mean[i]) /
+                               (stddev[i] == 0 ? 1 : stddev[i]);
+}
+
 // int main() {
 //     Classifier cl;
 //     string filename = "small-test-dataset-2-2.txt";
