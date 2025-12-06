@@ -24,7 +24,7 @@ void menu() {
 
         unordered_set<int> result = ForwardSelection(numberOfFeatures);
     }
-    else if (choice == 2) {
+    if (choice == 2) {
         cout << "Running Backward Elimination..." << endl;
         cout << endl;
         backwardElimination(numberOfFeatures);
