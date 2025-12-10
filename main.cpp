@@ -9,13 +9,33 @@
 using namespace std;
 
 void menu() {
-
-    int numberOfFeatures, choice;
+    int option, choice;
+    string fileName;
     cout << "Welcome to Colin Truong/David Lee/Bavly Shehata's Feature Selection Algorithm." << endl;
     cout << endl;
-    cout << "Please enter total number of features: ";
-    cin >> numberOfFeatures;
-    cout << endl;
+
+    Classifier cl;
+    cout << "Pick small (1) or large (2) or titanic (3) dataset: ";
+    cin >> option;
+    if (option == 1) {
+        fileName = "small-test-dataset-2-2.txt";
+    } else if (option == 2) {
+        fileName = "large-test-dataset-2.txt";
+    } else if (option == 3) {
+        fileName = "titanic clean-2.txt";
+    }
+
+    Classifier cl;
+    vector<Instance> dataset = cl.loadDataset(fileName);
+    if (dataset.empty()) {
+        cerr << "Failed to load dataset.\n";
+        return;
+    }
+
+    cl.normalizeData(dataset);
+
+    validator val(cl);
+
 
     cout << "Type the number of the algorithm you want to run." << endl;
     cout << "\n 1. Forward Selection \n 2. Backward Selection \n 3. N/A" << endl;
@@ -26,12 +46,12 @@ void menu() {
         cout << "Running Forward Selection..." << endl;
         cout << endl;
 
-        unordered_set<int> result = ForwardSelection(numberOfFeatures);
+        unordered_set<int> result = ForwardSelection(dataset, val);
     }
     if (choice == 2) {
         cout << "Running Backward Elimination..." << endl;
         cout << endl;
-        backwardElimination(numberOfFeatures);
+        backwardElimination(dataset, _Valid_);
     }
     else {
         cout << "Please choose only 1 or 2..." << endl;
@@ -171,12 +191,14 @@ int evaluation() {
 
     else {
         cout << "Invalid option." << endl;
+        return -1;
     }
+    return 0;
 }
 
 int main()
 {
-    //menu();
+    menu();
     evaluation();
     return 0;
 }

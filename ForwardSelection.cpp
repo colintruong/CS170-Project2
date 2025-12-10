@@ -1,4 +1,5 @@
 #include "ForwardSelection.h"
+#include "validator.h"
 #include <climits>
 #include <iomanip>
 
@@ -28,17 +29,19 @@ void printSet(const unordered_set<int>& s) {
     cout << "}";
 }
 
-unordered_set<int> ForwardSelection(int n) {
-    cout << fixed << setprecision(1);
+unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& val) {
+    cout << fixed << setprecision(2);
 
-    cout << "Using no features and \"random\" evaluation, I get an accuracy of "
-         << getRandomAcc() << "%\n" << endl;
-    cout << "Beginning search.\n" << endl;
+    int n = dataset[0].features.size();
 
     unordered_set<int> bestSet = {};
     double bestValue = -DBL_MAX;
     unordered_set<int> currentSet = {};
     double lastValue = -DBL_MAX;
+
+    cout << "Using no features and \"random\" evaluation, I get an accuracy of "
+         << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";
+    cout << "Beginning search.\n";
 
     while (currentSet.size() < n) {
         unordered_map<unordered_set<int>, double, SetHash, SetEq> map;
@@ -59,11 +62,10 @@ unordered_set<int> ForwardSelection(int n) {
 
         unordered_set<int> nextSet = getMaxKey(map);
         double nextValue = map[nextSet];
-        
-        cout << endl;
+
         cout << "Feature set ";
         printSet(nextSet);
-        cout << " was best, accuracy is " << nextValue << "%\n" << endl;
+        cout << " was best, accuracy is " << nextValue << "%\n";
 
         if (lastValue > 0 && nextValue < lastValue) {
             cout << "(Warning, Accuracy has decreased!)\n";
