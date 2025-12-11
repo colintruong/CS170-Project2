@@ -89,7 +89,7 @@ void menu() {
     } else if (option == 2) {
         fileName = "large-test-dataset-2.txt";
     } else if (option == 3) {
-        fileName = "titanic clean-2.txt";
+        fileName = "titanic-clean-2.txt";
     }
 
     Classifier cl;
