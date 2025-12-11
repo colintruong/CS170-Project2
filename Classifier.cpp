@@ -8,7 +8,7 @@ void Classifier::train(const vector<Instance>& data) {
 }
 
 int Classifier::test(const vector<double>& id) {
-    float bestDist = INT_MAX;
+    double bestDist = INFINITY;
     int bestClass = -1;
     
     for (const Instance& instance : trainingData) {
