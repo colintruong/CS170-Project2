@@ -49,7 +49,8 @@ unordered_set<int> backwardElimination(const vector<Instance>& dataset, validato
     vector<int> bestSoFar = currSet;
     double bestAccuracy = currAccuracy;
 
-    cout << "Features: " << stringFormat(currSet) << " Accuracy: " << currAccuracy << "%\n";
+    cout << "Using no features, I get a default accuracy of "
+         << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";
     cout << "Beginning the search.\n";
 
     while (currSet.size() > 1) {
