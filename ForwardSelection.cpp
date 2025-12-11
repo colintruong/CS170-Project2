@@ -33,9 +33,9 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
     int n = dataset[0].features.size();
 
     unordered_set<int> bestSet = {};
-    double bestValue = -DBL_MAX;
+    double bestValue = 0;
     unordered_set<int> currentSet = {};
-    double lastValue = -DBL_MAX;
+    double lastValue = 0;
 
     cout << "Using no features, I get a default accuracy of "
          << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";

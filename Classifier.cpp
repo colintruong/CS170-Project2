@@ -9,7 +9,7 @@ void Classifier::train(const vector<Instance>& data) {
 
 int Classifier::test(const vector<double>& id) {
     double bestDist = INFINITY;
-    int bestClass = -1;
+    int bestClass = 0;
     
     for (const Instance& instance : trainingData) {
         double distance = euclidean(id, instance.features);
