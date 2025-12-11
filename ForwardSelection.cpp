@@ -1,14 +1,12 @@
 #include "ForwardSelection.h"
-#include "validator.h"
-#include <climits>
-#include <iomanip>
 
-double getRandomAcc() {
-    static random_device rd;
-    static mt19937 gen(rd());
-    uniform_real_distribution<double> dist(20.0, 80.0);
-    return dist(gen);
-}
+
+// double getRandomAcc() {
+//     static random_device rd;
+//     static mt19937 gen(rd());
+//     uniform_real_distribution<double> dist(20.0, 80.0);
+//     return dist(gen);
+// }
 
 unordered_set<int> getMaxKey(const unordered_map<unordered_set<int>, double, SetHash, SetEq>& mp) {
     auto it = max_element(
@@ -41,6 +39,7 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
 
     cout << "Using no features and \"random\" evaluation, I get an accuracy of "
          << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";
+         
     cout << "Beginning search.\n";
 
     while (currentSet.size() < n) {
@@ -51,7 +50,8 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
                 unordered_set<int> newFeature = currentSet;
                 newFeature.insert(i);
 
-                double score = getRandomAcc();
+                vector<int> feature(newFeature.begin(), newFeature.end());
+                double score = val.leaveOneOutValidation(dataset, feature) * 100.0;
                 map.insert({ newFeature, score });
 
                 cout << "Using feature(s) ";

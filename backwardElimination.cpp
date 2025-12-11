@@ -5,14 +5,16 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <climits>
+#include <cfloat>
 
 using namespace std;
 
-double randomGenerator(const vector<int>& features){
-    static mt19937 rng(random_device{}());
-    static uniform_real_distribution<double> dist(0.0, 100.0);
-    return dist(rng);
-}
+// double randomGenerator(const vector<int>& features){
+//     static mt19937 rng(random_device{}());
+//     static uniform_real_distribution<double> dist(0.0, 100.0);
+//     return dist(rng);
+// }
 
 string stringFormat(const vector<int>& features){
     if (features.empty()){
@@ -33,53 +35,67 @@ string stringFormat(const vector<int>& features){
     return s;
 }
 
-void backwardElimination(int numFeatures){
+unordered_set<int> backwardElimination(const vector<Instance>& dataset, validator& val) {
+    cout << fixed << setprecision(2);
+
+    int n = dataset[0].features.size();
+
     vector<int> currSet;
-    for (int i = 1; i <= numFeatures; ++i){
+    for (int i = 1; i <= n; ++i) {
         currSet.push_back(i);
     }
 
-    double currAccuracy = randomGenerator(currSet);
+    double currAccuracy = val.leaveOneOutValidation(dataset, currSet) * 100.0;
     vector<int> bestSoFar = currSet;
     double bestAccuracy = currAccuracy;
 
-    cout << "Features: " << stringFormat(currSet) << " Evaluation: \"random\" Accuracy: " << fixed << setprecision(1) << currAccuracy << "%\n" << endl;
-    cout << "Beginning the search.\n" << endl;
+    cout << "Features: " << stringFormat(currSet) << " Accuracy: " << currAccuracy << "%\n";
+    cout << "Beginning the search.\n";
 
-    while (currSet.size() > 1){
-        double bestAccLevel = -1.0;
+    while (currSet.size() > 1) {
+        double bestAccLevel = -DBL_MAX;
         vector<int> bestCand;
 
-        for (size_t j = 0; j < currSet.size(); ++j){
+        for (size_t j = 0; j < currSet.size(); ++j) {
             vector<int> candidate;
             candidate.reserve(currSet.size() - 1);
+
             for (size_t k = 0; k < currSet.size(); ++k) {
-                if (k != j){
+                if (k != j) {
                     candidate.push_back(currSet[k]);
                 }
             }
 
-            double acc = randomGenerator(candidate);
-            cout << "Feature: " << stringFormat(candidate) << " Accuracy: " << fixed << setprecision(1) << acc << "%\n";
-            if (acc > bestAccLevel){
+            double acc = val.leaveOneOutValidation(dataset, candidate) * 100.0;
+
+            cout << "Feature subset: " << stringFormat(candidate) 
+                 << " Accuracy: " << acc << "%\n";
+
+            if (acc > bestAccLevel) {
                 bestAccLevel = acc;
                 bestCand = candidate;
             }
         }
 
         currSet = bestCand;
-        cout << endl;
-        cout << "Feature: " << stringFormat(currSet) << " was best. Accuracy: " << fixed << setprecision(1) << bestAccLevel << "%\n" << endl;
 
-        if (bestAccLevel < bestAccuracy){
+        cout << "\nBest subset at this level: " << stringFormat(currSet) 
+             << " Accuracy: " << bestAccLevel << "%\n";
+
+        if (bestAccLevel < bestAccuracy) {
             cout << "(Warning, Accuracy has decreased!)\n";
         }
 
-        if (bestAccLevel > bestAccuracy){
+        if (bestAccLevel > bestAccuracy) {
             bestAccuracy = bestAccLevel;
             bestSoFar = currSet;
         }
     }
 
-    cout << "Best feature: " << stringFormat(bestSoFar) << ". Accuracy: " << fixed << setprecision(1) << bestAccuracy << "%\n";
+    cout << "\nFinished search!! Best feature subset: " << stringFormat(bestSoFar)
+         << " Accuracy: " << bestAccuracy << "%\n";
+
+    unordered_set<int> bestSet(bestSoFar.begin(), bestSoFar.end());
+    return bestSet;
 }
+
