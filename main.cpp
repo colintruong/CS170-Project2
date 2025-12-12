@@ -8,77 +8,6 @@
 
 using namespace std;
 
-int evaluation(const unordered_set<int>& featureSubset, 
-               const string& fileName, 
-               const vector<Instance>& dataset, 
-               validator& val) 
-{
-    if (dataset.empty()) {
-        cerr << "Dataset is empty. Cannot evaluate.\n";
-        return 0;
-    }
-
-    Classifier cl;
-    cl.normalizeData(const_cast<vector<Instance>&>(dataset)); // normalize in-place if needed
-
-    // Convert unordered_set<int> to vector<int> for validator
-    vector<int> features(featureSubset.begin(), featureSubset.end());
-
-    cout << "\n===== FEATURE SUBSET EVALUATION =====" << endl;
-    cout << "Feature subset: ";
-    for (size_t i = 0; i < features.size(); ++i) {
-        cout << features[i];
-        if (i + 1 < features.size()) cout << ", ";
-    }
-    cout << "\n" << endl;
-
-    auto start = chrono::high_resolution_clock::now();
-
-    int n = dataset.size();
-    int correct = 0;
-
-    // Manual LOO, printed instance by instance
-    for (int i = 0; i < n; i++) {
-        // Build training set excluding instance i
-        vector<Instance> train;
-        train.reserve(n - 1);
-        for (int j = 0; j < n; j++) {
-            if (j != i) {
-                train.push_back(val.inst(dataset[j], features));
-            }
-        }
-
-        cl.train(train);
-
-        vector<double> testFeatures = val.feat(dataset[i], features);
-
-        // Classify and compare
-        int predicted = cl.test(testFeatures);
-        int actual = dataset[i].classLabel;
-
-        cout << "Instance " << i
-             << " | Predicted = " << predicted
-             << " | Actual = " << actual
-             << " | " << (predicted == actual ? "Correct" : "Wrong")
-             << endl;
-
-        if (predicted == actual) correct++;
-    }
-
-    double accuracy = (double)correct / n;
-
-    auto end = chrono::high_resolution_clock::now();
-    double elapsed = chrono::duration<double>(end - start).count();
-
-    cout << "\nCorrect Predictions: " << correct << " / " << n << endl;
-    cout << fixed << setprecision(6);
-    cout << "Final accuracy = " << accuracy << endl;
-    cout << "Time elapsed = " << elapsed << " seconds\n";
-    cout << "===== END FEATURE SUBSET EVALUATION =====\n";
-
-    return 0;
-}
-
 void menu() {
     int option, choice;
     string fileName;
@@ -105,6 +34,7 @@ void menu() {
     }
 
     cl.normalizeData(dataset);
+    cout << "Normalizing data...  done." << endl;
 
     validator val(cl);
 
