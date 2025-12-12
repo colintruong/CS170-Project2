@@ -37,7 +37,9 @@ int evaluation(const unordered_set<int>& featureSubset,
     int n = dataset.size();
     int correct = 0;
 
+    // Manual LOO, printed instance by instance
     for (int i = 0; i < n; i++) {
+        // Build training set excluding instance i
         vector<Instance> train;
         train.reserve(n - 1);
         for (int j = 0; j < n; j++) {
@@ -49,6 +51,8 @@ int evaluation(const unordered_set<int>& featureSubset,
         cl.train(train);
 
         vector<double> testFeatures = val.feat(dataset[i], features);
+
+        // Classify and compare
         int predicted = cl.test(testFeatures);
         int actual = dataset[i].classLabel;
 
@@ -82,6 +86,7 @@ void menu() {
     cout << "Welcome to Colin Truong/David Lee/Bavly Shehata's Feature Selection Algorithm." << endl;
     cout << endl;
 
+    // Choosing which dataset to use
     cout << "Pick small (1) or large (2) or titanic (3) dataset: ";
     cin >> option;
     if (option == 1) {
@@ -103,26 +108,24 @@ void menu() {
 
     validator val(cl);
 
-
+    // Choosing which algorithm to use
     cout << "Type the number of the algorithm you want to run." << endl;
     cout << "\n 1. Forward Selection \n 2. Backward Selection \n 3. N/A" << endl;
     cin >> choice;
     cout << endl;
 
+    // Returns a optimal feature subset
     if (choice == 1) {
         cout << "Running Forward Selection..." << endl;
         cout << endl;
         result = ForwardSelection(dataset, val);
-    }
-    if (choice == 2) {
+    } else if (choice == 2) {
         cout << "Running Backward Elimination..." << endl;
         cout << endl;
         result = backwardElimination(dataset, val);
-    }
-    else {
+    } else {
         cout << "Please choose only 1 or 2..." << endl;
     }
-    evaluation(result, fileName, dataset, val);
 }
 
 int main()

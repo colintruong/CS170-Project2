@@ -11,7 +11,6 @@
 
 using namespace std;
 
-double randomGenerator(const vector<int>& features);
 string stringFormat(const vector<int>& features);
 unordered_set<int> backwardElimination(const vector<Instance>& dataset, validator& val);
 

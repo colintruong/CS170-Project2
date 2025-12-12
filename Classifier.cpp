@@ -1,26 +1,29 @@
 #include "Classifier.h"
 
 Classifier::Classifier() {
+    // Placeholder
 }
 
+// stores data for NN lookup
 void Classifier::train(const vector<Instance>& data) {
     trainingData = data;
 }
 
 int Classifier::test(const vector<double>& id) {
-    double bestDist = INFINITY;
+    double bestDist = INFINITY;     // initialized as a super large value
     int bestClass = 0;
     
-    for (const Instance& instance : trainingData) {
+    for (const Instance& instance : trainingData) {     // going through each instance in the training data and calculating distance from our input data point
         double distance = euclidean(id, instance.features);
-        if (distance < bestDist) {
+        if (distance < bestDist) {  // update if there's a closer instance
             bestDist = distance;
             bestClass = instance.classLabel;
         }
     }
-    return bestClass;
+    return bestClass;   // returns closest instance's class (1-NN)
 }
 
+// Euclidean distance between two Instances
 double Classifier::euclidean(const vector<double>& a, const vector<double>& b) const {
     double sum = 0.0;
     for (int i = 0; i < a.size(); i++) {
@@ -72,7 +75,7 @@ vector<Instance> Classifier::loadDataset(const string& filename) {
     return dataset;
 }
 
-
+// Normalizing data with z-score function
 void Classifier::normalizeData(vector<Instance>& data) {
     if (data.empty()) return;
 
@@ -101,26 +104,3 @@ void Classifier::normalizeData(vector<Instance>& data) {
             inst.features[i] = (inst.features[i] - mean[i]) /
                                (stddev[i] == 0 ? 1 : stddev[i]);
 }
-
-// int main() {
-//     Classifier cl;
-//     string filename = "small-test-dataset-2-2.txt";
-//     vector<Instance> dataset = cl.loadDataset(filename);
-
-//     if (dataset.empty()) {
-//         cerr << "Dataset empty!\n";
-//         return 1;
-//     }
-
-//     // Example: train on all but last instance, test on last
-//     vector<Instance> trainSet(dataset.begin(), dataset.end() - 1);
-//     cl.train(trainSet);
-
-//     int predicted = cl.test(dataset.back().features);
-//     cout << "Predicted: " << predicted 
-//          << ", Actual: " << dataset.back().classLabel << endl;
-
-//     return 0;
-// }
-
-

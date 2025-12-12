@@ -1,13 +1,6 @@
 #include "ForwardSelection.h"
 
-
-// double getRandomAcc() {
-//     static random_device rd;
-//     static mt19937 gen(rd());
-//     uniform_real_distribution<double> dist(20.0, 80.0);
-//     return dist(gen);
-// }
-
+// Returns the feature set with the highest accuracy in the map
 unordered_set<int> getMaxKey(const unordered_map<unordered_set<int>, double, SetHash, SetEq>& mp) {
     auto it = max_element(
         mp.begin(), mp.end(),
@@ -32,20 +25,25 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
 
     int n = dataset[0].features.size();
 
-    unordered_set<int> bestSet = {};
-    double bestValue = 0;
-    unordered_set<int> currentSet = {};
-    double lastValue = 0;
+    unordered_set<int> bestSet = {};        // best global subset
+    double bestValue = 0;                   // best global accuracy
+    unordered_set<int> currentSet = {};     // current subset
+    double lastValue = 0;                   // current subset accuracy
 
+    // Default accuracy
     cout << "Using no features, I get a default accuracy of "
          << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";
          
     cout << "Beginning search.\n";
 
+    // Continuously adding features until we have all features considered
     while (currentSet.size() < n) {
+        // Map to store current iteration's subsets and their corresponding accuracies
         unordered_map<unordered_set<int>, double, SetHash, SetEq> map;
 
+        // Go through each feature
         for (int i = 1; i <= n; i++) {
+            // If feature i is not in the current set, add. Else, skip
             if (currentSet.count(i) == 0) {
                 unordered_set<int> newFeature = currentSet;
                 newFeature.insert(i);
@@ -60,6 +58,7 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
             }
         }
 
+        // Getting the best feature subset in the current iteration
         unordered_set<int> nextSet = getMaxKey(map);
         double nextValue = map[nextSet];
 
@@ -67,14 +66,14 @@ unordered_set<int> ForwardSelection(const vector<Instance>& dataset, validator& 
         printSet(nextSet);
         cout << " was best, accuracy is " << nextValue << "%\n";
 
-        if (lastValue > 0 && nextValue < lastValue) {
+        if (nextValue < lastValue) {
             cout << "(Warning, Accuracy has decreased!)\n";
         }
 
         currentSet = nextSet;
         lastValue = nextValue;
 
-        if (nextValue > bestValue) {
+        if (nextValue > bestValue) {    // updating the best subset if possible
             bestSet = nextSet;
             bestValue = nextValue;
         }

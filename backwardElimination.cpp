@@ -10,12 +10,7 @@
 
 using namespace std;
 
-// double randomGenerator(const vector<int>& features){
-//     static mt19937 rng(random_device{}());
-//     static uniform_real_distribution<double> dist(0.0, 100.0);
-//     return dist(rng);
-// }
-
+// Convert the vector of features into a sorted string
 string stringFormat(const vector<int>& features){
     if (features.empty()){
         return "{}";
@@ -38,26 +33,32 @@ string stringFormat(const vector<int>& features){
 unordered_set<int> backwardElimination(const vector<Instance>& dataset, validator& val) {
     cout << fixed << setprecision(2);
 
+    // Number of features for each instance
     int n = dataset[0].features.size();
 
+    // Start with the full feature set
     vector<int> currSet;
     for (int i = 1; i <= n; ++i) {
         currSet.push_back(i);
     }
 
+    // Evaluating accuracy using all features
     double currAccuracy = val.leaveOneOutValidation(dataset, currSet) * 100.0;
     vector<int> bestSoFar = currSet;
     double bestAccuracy = currAccuracy;
 
+    // Evaluating accuracy with no features
     cout << "Using no features, I get a default accuracy of "
          << val.leaveOneOutValidation(dataset, {}) * 100 << "%\n";
     cout << "Beginning the search.\n";
 
+    // Removing one feature every iteration
     while (currSet.size() > 1) {
-        double bestAccLevel = -DBL_MAX;
-        vector<int> bestCand;
+        double bestAccLevel = -DBL_MAX;     // best accuracy at this level
+        vector<int> bestCand;               // best feature subset at this level
 
         for (size_t j = 0; j < currSet.size(); ++j) {
+            // Creating a new candidate subset with currSet[j] removed
             vector<int> candidate;
             candidate.reserve(currSet.size() - 1);
 
@@ -67,17 +68,20 @@ unordered_set<int> backwardElimination(const vector<Instance>& dataset, validato
                 }
             }
 
+            // Evaluate the candidate's accuracy
             double acc = val.leaveOneOutValidation(dataset, candidate) * 100.0;
 
             cout << "Feature subset: " << stringFormat(candidate) 
                  << " Accuracy: " << acc << "%\n";
 
+            // Keep track of the best subset at this level
             if (acc > bestAccLevel) {
                 bestAccLevel = acc;
                 bestCand = candidate;
             }
         }
 
+        // Update current set to the best subset found in this iteration
         currSet = bestCand;
 
         cout << "\nBest subset at this level: " << stringFormat(currSet) 
@@ -87,6 +91,7 @@ unordered_set<int> backwardElimination(const vector<Instance>& dataset, validato
             cout << "(Warning, Accuracy has decreased!)\n";
         }
 
+        // Update the global best if there's improvement
         if (bestAccLevel > bestAccuracy) {
             bestAccuracy = bestAccLevel;
             bestSoFar = currSet;
